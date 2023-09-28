@@ -1,0 +1,167 @@
+[
+  {
+    "id": 2,
+    "title": "Ford Mustang GT",
+    "description": "Superbe Ford Mustang GT en excellent état",
+    "owner": "Propriétaire 1",
+    "price": 35000,
+    "imgUrl": "image1.jpg",
+    "location": "Los Angeles",
+    "createdAt": "2023-09-01T00:00:00.000Z",
+    "category": 2
+  },
+  {
+    "id": 3,
+    "title": "Trench-coat élégant",
+    "description": "Trench-coat élégant pour hommes",
+    "owner": "Propriétaire 2",
+    "price": 150,
+    "imgUrl": "image2.jpg",
+    "location": "New York",
+    "createdAt": "2023-09-01T00:00:00.000Z",
+    "category": 1
+  },
+  {
+    "id": 4,
+    "title": "Mercedes-Benz C300",
+    "description": "Élégante Mercedes-Benz C300 avec équipements de luxe",
+    "owner": "Propriétaire 3",
+    "price": 45000,
+    "imgUrl": "image3.jpg",
+    "location": "Miami",
+    "createdAt": "2023-09-18T00:00:00.000Z",
+    "category": 2
+  },
+  {
+    "id": 5,
+    "title": "Jeep Wrangler Sahara",
+    "description": "Jeep Wrangler Sahara prête pour le tout-terrain",
+    "owner": "Propriétaire 4",
+    "price": 28000,
+    "imgUrl": "image4.jpg",
+    "location": "Denver",
+    "createdAt": "2023-09-17T00:00:00.000Z",
+    "category": 2
+  },
+  {
+    "id": 6,
+    "title": "Veste en cuir vintage",
+    "description": "Veste en cuir vintage pour femmes, style rétro",
+    "owner": "Propriétaire 5",
+    "price": 120,
+    "imgUrl": "image5.jpg",
+    "location": "Chicago",
+    "createdAt": "2023-09-16T00:00:00.000Z",
+    "category": 1
+  },
+  {
+    "id": 7,
+    "title": "Tesla Model S",
+    "description": "Tesla Model S électrique à la pointe de la technologie",
+    "owner": "Propriétaire 6",
+    "price": 60000,
+    "imgUrl": "image6.jpg",
+    "location": "San Francisco",
+    "createdAt": "2023-09-15T00:00:00.000Z",
+    "category": 2
+  },
+  {
+    "id": 8,
+    "title": "BMW X5",
+    "description": "BMW X5 puissante avec espace pour toute la famille",
+    "owner": "Propriétaire 7",
+    "price": 42000,
+    "imgUrl": "image7.jpg",
+    "location": "Dallas",
+    "createdAt": "2023-09-01T00:00:00.000Z",
+    "category": 3
+  },
+  {
+    "id": 9,
+    "title": "Chemise en soie",
+    "description": "Chemise en soie de haute qualité pour hommes",
+    "owner": "Propriétaire 8",
+    "price": 80,
+    "imgUrl": "image8.jpg",
+    "location": "Seattle",
+    "createdAt": "2023-09-01T00:00:00.000Z",
+    "category": 1
+  },
+  {
+    "id": 10,
+    "title": "Lexus RX 350",
+    "description": "Lexus RX 350 luxueuse avec intérieur en cuir",
+    "owner": "Propriétaire 9",
+    "price": 38000,
+    "imgUrl": "image9.jpg",
+    "location": "Houston",
+    "createdAt": "2023-09-18T00:00:00.000Z",
+    "category": 2
+  },
+  {
+    "id": 11,
+    "title": "Subaru Outback",
+    "description": "Subaru Outback robuste pour les aventures en plein air",
+    "owner": "Propriétaire 10",
+    "price": 27000,
+    "imgUrl": "image10.jpg",
+    "location": "Phoenix",
+    "createdAt": "2023-09-17T00:00:00.000Z",
+    "category": 2
+  },
+  {
+    "id": 12,
+    "title": "Robe de soirée élégante",
+    "description": "Robe de soirée élégante pour femmes, parfaite pour les occasions spéciales",
+    "owner": "Propriétaire 11",
+    "price": 150,
+    "imgUrl": "image11.jpg",
+    "location": "San Diego",
+    "createdAt": "2023-09-16T00:00:00.000Z",
+    "category": 1
+  },
+  {
+    "id": 13,
+    "title": "Chevrolet Silverado",
+    "description": "Chevrolet Silverado robuste pour les travaux lourds",
+    "owner": "Propriétaire 12",
+    "price": 32000,
+    "imgUrl": "image12.jpg",
+    "location": "Austin",
+    "createdAt": "2023-09-15T00:00:00.000Z",
+    "category": 2
+  },
+  {
+    "id": 16,
+    "title": "Appartement en duplex",
+    "description": "Appartement en duplex avec terrasse privée",
+    "owner": "Propriétaire 22",
+    "price": 2800,
+    "imgUrl": "image22.jpg",
+    "location": "Dallas",
+    "createdAt": "2023-09-17T00:00:00.000Z",
+    "category": 3
+  },
+  {
+    "id": 17,
+    "title": "Vélo de course professionnel",
+    "description": "Vélo de course professionnel pour les compétitions",
+    "owner": "Propriétaire 23",
+    "price": 1500,
+    "imgUrl": "image23.jpg",
+    "location": "Seattle",
+    "createdAt": "2023-09-16T00:00:00.000Z",
+    "category": 3
+  },
+  {
+    "id": 18,
+    "title": "Appartement de charme",
+    "description": "Appartement de charme avec poutres apparentes",
+    "owner": "Propriétaire 24",
+    "price": 1600,
+    "imgUrl": "image24.jpg",
+    "location": "Houston",
+    "createdAt": "2023-09-15T00:00:00.000Z",
+    "category": 3
+  }
+]
