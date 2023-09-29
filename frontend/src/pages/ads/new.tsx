@@ -109,13 +109,13 @@ const NewAd = () => {
         // si j'ai une id, je mets à jour l'annonce
         if (id) {
           await axios.patch(`http://localhost:5000/ads/${id}`, data);
-          router.push(`/ads/${id}`);
+          router.replace(`/ads/${id}`);
         } else {
           // sinon je poste la nouvelle annonce
           const result = await axios.post("http://localhost:5000/ads", data);
           if ("id" in result.data) {
             form.reset();
-            router.push(`/ads/${result.data.id}`);
+            router.replace(`/ads/${result.data.id}`);
           }
         }
       } catch (err) {
