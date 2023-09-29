@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import AdCard,  { AdCardProps } from "./AdCard";
+import AdCard, { AdCardProps } from "./AdCard";
 
 type RecentAdsProps = {
   categoryId?: number;
@@ -12,8 +12,8 @@ const RecentAds = (props: RecentAdsProps): React.ReactNode => {
   const [item, setItem] = useState<AdCardProps[]>([]);
   const [isInitialized, setIsInitialized] = useState(false);
   const [ads, setAds] = useState<AdCardProps[]>([]);
+  const [priceSort, setPriceSort] = useState("");
   const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
 
   const AdPrice = (adPrice: number, ad: AdCardProps) => {
     setTotal(total + adPrice);
@@ -22,24 +22,32 @@ const RecentAds = (props: RecentAdsProps): React.ReactNode => {
   };
 
   async function fetchAds() {
-     let url = `http://localhost:5000/ads?`;
+    let url = `http://localhost:5000/ads?`;
 
     if (props.categoryId) {
       url += `categoryIn=${props.categoryId}&`;
+    } 
+    
+    const orderByPrice = priceSort 
+    if (orderByPrice) {
+      url += `orderByPrice=${orderByPrice}&`;
     }
 
     if (props.searchWord) {
       url += `searchTitle=${props.searchWord}&`;
     }
 
+    url += `skip=${(page - 1) * 9}&take=9`;
+
     const result = await axios.get(url);
+
     setAds(result.data);
   }
 
   useEffect(() => {
     // mounting
     fetchAds();
-  }, [props.categoryId, props.searchWord]);
+  }, [props.categoryId, props.searchWord, page, priceSort]);
 
   const pageChange = (newPage: number) => {
     setPage(newPage);
@@ -54,6 +62,17 @@ const RecentAds = (props: RecentAdsProps): React.ReactNode => {
   return (
     <main className="main-content">
       <h2>Annonces récentes</h2>
+      <form className="text-field-with-button">
+        <select
+          name="category"
+          value={priceSort}
+          onChange={(e) => setPriceSort(e.target.value)}
+        >
+          <option value="">-- Trier par --</option>
+          <option value="ASC">Prix croissant</option>
+          <option value="DESC">Prix décroissant</option>
+        </select>
+      </form>
       <p>Prix total : {total !== null ? `${total} €` : "0 €"}</p>
       <div>
         Panier :{" "}
@@ -105,10 +124,12 @@ const RecentAds = (props: RecentAdsProps): React.ReactNode => {
         <button className="button" onClick={previousPage}>
           Page précédente
         </button>
-        <span>
-          Page {page} sur {totalPages}
-        </span>
-        <button className="button" onClick={() => pageChange(page + 1)}>
+        <span>Page {page}</span>
+        <button
+          className="button"
+          onClick={() => pageChange(page + 1)}
+          disabled={ads.length === 0 || ads.length < 9}
+        >
           Page suivante
         </button>
       </div>

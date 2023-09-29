@@ -8,6 +8,8 @@ import data from "../data/data.json";
 
 export class AdsController extends Controller {
   getAll = async (req: Request, res: Response) => {
+    const skip = req.query.skip ? parseInt(req.query.skip.toString()) : 0;
+    const take = req.query.take ? parseInt(req.query.take.toString()) : 9;
     // req.params : /ads/:id. Non
     // req.body : POST/PUT/PATCH. Non
     // req.query : /ads?categoryId=12. Oui
@@ -51,6 +53,8 @@ export class AdsController extends Controller {
         category: true,
         tags: true,
       },
+      skip,
+      take,
     });
     res.send(ads);
   };

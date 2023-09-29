@@ -14,7 +14,7 @@ export default function Home() {
   }, [router.query]);
 
   return (
-    <Layout title="Home">
+    <Layout title="The Good Corner - Home">
       <RecentAds searchWord={searchWord} />
     </Layout>
   );

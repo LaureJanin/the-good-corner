@@ -7,7 +7,7 @@ export default function Category() {
   const categoryId = Number(router.query.id);
 
   return (
-    <Layout title="Category">
+    <Layout title="The Good Corner - Category">
       <RecentAds categoryId={categoryId} />
     </Layout>
   );

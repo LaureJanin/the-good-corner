@@ -4,10 +4,13 @@ GET http://localhost:5000/ads
 
 GET http://localhost:5000/ads/22
 
-
 ###
 
 GET http://localhost:5000/ads?categoryIn=2,1&orderByTitle=DESC
+
+###
+
+GET http://localhost:5000/ads?categoryIn=2&orderByPrice=DESC
 
 ###
 
@@ -15,7 +18,7 @@ GET http://localhost:5000/ads/search?title=bike
 
 ###
 
-GET http://localhost:5000/ads/sort-by-date?sortOrder=desc
+GET http://localhost:5000/ads?skip=0&take=10
 
 ###
 

@@ -11,7 +11,7 @@ const AdDetail = (): React.ReactNode => {
   const [selectedAd, setSelectedAd] = useState<AdCardProps>();
   
   const router = useRouter();
-  const adId = router.query.id;
+  const adId = router.query.id as string;
 
   // Récupère les data d'une annonce
   const fetchData = async () => {
@@ -21,7 +21,6 @@ const AdDetail = (): React.ReactNode => {
           `http://localhost:5000/ads/${adId}`
         );
         setSelectedAd(result.data);
-        console.log(result.data);
       }
     } catch (err) {
       console.error("error", err);
