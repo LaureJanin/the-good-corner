@@ -6,6 +6,7 @@ import { queryAllAds } from "@/graphql/queryAllAds";
 type RecentAdsProps = {
   categoryId?: number;
   searchWord?: string;
+  priceSort?: string;
 };
 
 const RecentAds = (props: RecentAdsProps): React.ReactNode => {
@@ -27,6 +28,7 @@ const RecentAds = (props: RecentAdsProps): React.ReactNode => {
         ...(props.categoryId ? { categoryIn: [props.categoryId] } : {}),
         ...(props.searchWord ? { searchTitle: props.searchWord } : {}),
       },
+      priceSort: priceSort,
     },
   });
   const ads = data ? data.allAds : [];

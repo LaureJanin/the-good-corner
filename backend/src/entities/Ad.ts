@@ -112,4 +112,7 @@ export class AdsWhere {
 
   @Field(() => Int, { nullable: true })
   priceLte?: number;
+
+  @Field(() => String, { nullable: true })
+  priceSort?: "ASC" | "DESC";
 }

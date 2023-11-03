@@ -8,7 +8,8 @@ import { merge } from "../utils";
 export class AdsResolver {
   @Query(() => [Ad])
   async allAds(
-    @Arg("where", { nullable: true }) where?: AdsWhere
+    @Arg("where", { nullable: true }) where?: AdsWhere,
+    @Arg("priceSort", { nullable: true }) priceSort?: "ASC" | "DESC"
   ): Promise<Ad[]> {
     const queryWhere: any = {};
 
@@ -28,24 +29,15 @@ export class AdsResolver {
       queryWhere.price = LessThanOrEqual(Number(where.priceLte));
     }
 
-    /* const order: any = {};
-    if (
-      typeof req.query.orderByTitle === "string" &&
-      ["ASC", "DESC"].includes(req.query.orderByTitle)
-    ) {
-      order.title = req.query.orderByTitle; // req.query.orderByTitle = ASC | DESC
-    }
+    const order: { [key: string]: "ASC" | "DESC" } = {};
 
-    if (
-      typeof req.query.orderByPrice === "string" &&
-      ["ASC", "DESC"].includes(req.query.orderByPrice)
-    ) {
-      order.price = req.query.orderByPrice; // req.query.orderByTitle = ASC | DESC
-    } */
+    if (priceSort) {
+      order.price = priceSort;
+    }
 
     const ads = await Ad.find({
       where: queryWhere,
-      //order,
+      order,
       relations: {
         category: true,
         tags: true,
