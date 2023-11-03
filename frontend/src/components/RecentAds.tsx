@@ -1,6 +1,7 @@
-import { useState, useEffect } from "react";
-import axios from "axios";
-import AdCard, { AdCardProps } from "./AdCard";
+import { useState } from "react";
+import AdCard, { AdCardProps, AdType } from "./AdCard";
+import { useQuery } from "@apollo/client";
+import { queryAllAds } from "@/graphql/queryAllAds";
 
 type RecentAdsProps = {
   categoryId?: number;
@@ -11,7 +12,6 @@ const RecentAds = (props: RecentAdsProps): React.ReactNode => {
   const [total, setTotal] = useState(0);
   const [item, setItem] = useState<AdCardProps[]>([]);
   const [isInitialized, setIsInitialized] = useState(false);
-  const [ads, setAds] = useState<AdCardProps[]>([]);
   const [priceSort, setPriceSort] = useState("");
   const [page, setPage] = useState(1);
 
@@ -21,33 +21,15 @@ const RecentAds = (props: RecentAdsProps): React.ReactNode => {
     setIsInitialized(true);
   };
 
-  async function fetchAds() {
-    let url = `http://localhost:5000/ads?`;
-
-    if (props.categoryId) {
-      url += `categoryIn=${props.categoryId}&`;
-    } 
-    
-    const orderByPrice = priceSort 
-    if (orderByPrice) {
-      url += `orderByPrice=${orderByPrice}&`;
-    }
-
-    if (props.searchWord) {
-      url += `searchTitle=${props.searchWord}&`;
-    }
-
-    url += `skip=${(page - 1) * 9}&take=9`;
-
-    const result = await axios.get(url);
-
-    setAds(result.data);
-  }
-
-  useEffect(() => {
-    // mounting
-    fetchAds();
-  }, [props.categoryId, props.searchWord, page, priceSort]);
+  const { data } = useQuery<{ allAds: AdType[] }>(queryAllAds, {
+    variables: {
+      where: {
+        ...(props.categoryId ? { categoryIn: [props.categoryId] } : {}),
+        ...(props.searchWord ? { searchTitle: props.searchWord } : {}),
+      },
+    },
+  });
+  const ads = data ? data.allAds : [];
 
   const pageChange = (newPage: number) => {
     setPage(newPage);
@@ -105,7 +87,7 @@ const RecentAds = (props: RecentAdsProps): React.ReactNode => {
               createdAt={ad.createdAt}
               category={ad.category}
               tag={ad.tag}
-              onDelete={fetchAds}
+              //onDelete={fetchAds}
             />
             <button className="button" onClick={() => AdPrice(ad.price, ad)}>
               Ajouter au panier
