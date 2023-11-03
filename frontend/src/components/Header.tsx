@@ -1,16 +1,15 @@
 import React from "react";
 import Link from "next/link";
 import { Category, CategoryType } from "@/components/Category";
-import { useState, useEffect } from "react";
-import axios from "axios";
+import { useState } from "react";
 import { useRouter } from "next/router";
-
+import { useQuery } from "@apollo/client";
+import { queryAllCategories } from "@/graphql/queryAllCategories";
 
 const Header = (): React.ReactNode => {
-  const [categories, setCategories] = useState<CategoryType[]>([]);
   const [searchWord, setSearchWord] = useState("");
   const router = useRouter();
- 
+
   function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     router.push(`/?searchWord=${searchWord.trim()}`);
@@ -21,21 +20,11 @@ const Header = (): React.ReactNode => {
     setSearchWord(""); // Vide l'input
     router.push(`/?searchWord=${searchWord.trim()}`);
   }
-  
-  const fetchData = async () => {
-    try {
-      const result = await axios.get<CategoryType[]>(
-        "http://localhost:5000/categories"
-      );
-      setCategories(result.data);
-    } catch (err) {
-      console.error("error", err);
-    }
-  };
 
-  useEffect(() => {
-    fetchData();
-  }, []);
+  const { data, error, loading } = useQuery<{ allCategories: CategoryType[] }>(
+    queryAllCategories
+  );
+  const categories = data ? data.allCategories : [];
 
   return (
     <header className="header">
@@ -69,22 +58,22 @@ const Header = (): React.ReactNode => {
             </svg>
           </button>
           <button
-            className="button button-primary" 
+            className="button button-primary"
             type="button"
             onClick={clearInputAndSubmit}
           >
             {/* Icône de suppression */}
-            <svg 
-              xmlns="http://www.w3.org/2000/svg" 
-              width="16" 
-              height="16" 
-              viewBox="0 0 16 16" 
-              className="bi bi-x" 
-              fill="currentColor" 
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              viewBox="0 0 16 16"
+              className="bi bi-x"
+              fill="currentColor"
               aria-hidden="true"
             >
-              <path 
-                fillRule="evenodd" 
+              <path
+                fillRule="evenodd"
                 d="M3.646 3.646a.5.5 0 0 1 .708 0L8 7.293l3.646-3.647a.5.5 0 1 1 .708.708L8.707 8l3.647 3.646a.5.5 0 1 1-.708.708L8 8.707l-3.646 3.647a.5.5 0 1 1-.708-.708L7.293 8 3.646 4.354a.5.5 0 0 1 0-.708z"
               />
             </svg>

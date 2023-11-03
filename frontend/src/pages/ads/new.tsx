@@ -1,8 +1,14 @@
 import Layout from "@/components/Layout";
 import { FormEvent, SetStateAction, useEffect, useState } from "react";
-import { CategoryProps } from "@/components/Category";
-import axios from "axios";
+import { CategoryType } from "@/components/Category";
 import { useRouter } from "next/router";
+import { AdType } from "@/components/AdCard";
+import { queryAdById } from "@/graphql/queryAdById";
+import { useMutation, useQuery } from "@apollo/client";
+import { queryAllCategories } from "@/graphql/queryAllCategories";
+import { mutationCreatedAd } from "@/graphql/mutationCreateAd";
+import { mutationUpdatedAd } from "@/graphql/mutationUpdateAd";
+import { queryAllAds } from "@/graphql/queryAllAds";
 
 type AdFormData = {
   id: number;
@@ -13,11 +19,10 @@ type AdFormData = {
   imgUrl: string;
   location: string;
   createdAt: Date;
-  category: { id: number } ;
+  category: { id: number };
 };
 
 const NewAd = () => {
-  const [categories, setCategories] = useState<CategoryProps[]>([]);
   const [error, setError] = useState<"title" | "price">();
   const [imageUrl, setImageUrl] = useState<string>("");
   const [formData, setFormData] = useState<AdFormData>({
@@ -55,68 +60,94 @@ const NewAd = () => {
     });
   };
 
-  // Récupération des catégories pour le select et des données de l'annonce quand une id est présente dans l'URL
+  const { data } = useQuery<{ ad: AdFormData }>(queryAdById, {
+    variables: { adId: id },
+    skip: id === undefined,
+  });
+
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        // Vérifie s'il y a une id dans l'URL et donc s'il s'agit d'une offre à modifier
-        if (id) {
-          const result = await axios.get<AdFormData>(
-            `http://localhost:5000/ads/${id}`
-          );
-          const adData = result.data;
+    if (data?.ad) {
+      setFormData(data.ad);
+      setImageUrl(data.ad.imgUrl);
+    }
+  }, [data]);
 
-          // Remplit le formulaire avec les données de l'annonce quand elle existe
-          setFormData(adData);
-          setImageUrl(adData.imgUrl);
-        }
+  // On récupère les categories
+  const { data: categoriesData } = useQuery<{ allCategories: CategoryType[] }>(
+    queryAllCategories
+  );
+  const categories = categoriesData ? categoriesData.allCategories : [];
 
-        // Récupère les catégories
-        const categoryResult = await axios.get<CategoryProps[]>(
-          "http://localhost:5000/categories"
-        );
-        setCategories(categoryResult.data);
-      } catch (err) {
-        console.error("error", err);
-      }
-    };
-    fetchData();
-  }, [id]);
+  // si pas d'ID parce qu'on est en création, on lui force la première id du tableau des catégories récupéré juste au-dessus
+  useEffect(() => {
+    if (!id && categories.length > 0) {
+      setFormData({ ...formData, category: { id: categories[0].id } });
+    }
+  }, [categories]);
+
+  const [createAd, { loading: createLoading }] = useMutation(
+    mutationCreatedAd,
+    {
+      refetchQueries: [queryAllAds],
+    }
+  );
+  const [updateAd, { loading: updateLoading }] = useMutation(
+    mutationUpdatedAd,
+    {
+      refetchQueries: [queryAdById, queryAllAds],
+    }
+  );
+
+  const loading = createLoading || updateLoading;
 
   // Poste ou modifie une annonce
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    const form = e.target as HTMLFormElement;
-    const formData = new FormData(form);
-    const data = Object.fromEntries(
-      formData.entries()
-    ) as unknown as AdFormData;
 
-    if ("categoryId" in data) {
-      data.category = { id: Number(data.categoryId) };
-      delete data.categoryId;
-    }
-
-    data.title = String(data.title);
-    data.price = Number(data.price);
-
-    if (data.title.trim().length < 3) {
+    if (formData.title.trim().length < 3) {
       setError("title");
-    } else if (data.price < 0) {
+    } else if (formData.price < 0) {
       setError("price");
     } else {
       try {
-        // si j'ai une id, je mets à jour l'annonce
+        let result;
         if (id) {
-          await axios.patch(`http://localhost:5000/ads/${id}`, data);
-          router.replace(`/ads/${id}`);
+          result = await updateAd({
+            variables: {
+              updateAdId: id,
+              data: {
+                title: formData.title,
+                description: formData.description,
+                // owner: formData.owner,
+                price: formData.price,
+                imgUrl: formData.imgUrl,
+                // location: formData.location,
+                // createdAt: formData.createdAt,
+                category: { id: formData.category.id },
+              },
+            },
+          });
         } else {
-          // sinon je poste la nouvelle annonce
-          const result = await axios.post("http://localhost:5000/ads", data);
-          if ("id" in result.data) {
-            form.reset();
-            router.replace(`/ads/${result.data.id}`);
-          }
+          result = await createAd({
+            variables: {
+              data: {
+                title: formData.title,
+                description: formData.description,
+                // owner: formData.owner,
+                price: formData.price,
+                imgUrl: formData.imgUrl,
+                // location: formData.location,
+                // createdAt: formData.createdAt,
+                category: { id: formData.category.id },
+              },
+            },
+          });
+        }
+
+        if (!id) {
+          router.replace(`/ads/${result.data.createAd.id}`);
+        } else {
+          router.replace(`/ads/${id}`);
         }
       } catch (err) {
         console.error("Erreur lors de la mise à jour de l'annonce", err);
@@ -205,21 +236,24 @@ const NewAd = () => {
             placeholder="localisation"
             value={formData.location}
             onChange={(e) =>
-                setFormData({ ...formData, location: e.target.value })
-              }
+              setFormData({ ...formData, location: e.target.value })
+            }
           />
           <br />
           <br />
-          <input
-            type="date"
-            className="text-field"
-            name="createdAt"
-          />
+          {/* <input type="date" className="text-field" name="createdAt" /> */}
           <br />
           <br />
-          <select name="category" value={formData.category.id} onChange={(e) =>
-              setFormData({ ...formData, category: { id : Number(e.target.value) } })
-            }>
+          <select
+            name="category"
+            value={formData.category.id}
+            onChange={(e) =>
+              setFormData({
+                ...formData,
+                category: { id: Number(e.target.value) },
+              })
+            }
+          >
             {categories.map((e) => (
               <option value={e.id} key={e.id}>
                 {e.name}
@@ -228,7 +262,7 @@ const NewAd = () => {
           </select>
           <br />
           <br />
-          <button type="submit" className="button">
+          <button type="submit" className="button" disabled={loading}>
             {id ? "Modifier" : "Publier"}
           </button>
         </form>
