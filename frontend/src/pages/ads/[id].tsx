@@ -4,13 +4,11 @@ import { useRouter } from "next/router";
 import Layout from "@/components/Layout";
 import { AdType } from "@/components/AdCard";
 import React from "react";
-import { gql, useMutation, useQuery } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import { queryAdById } from "@/graphql/queryAdById";
 import { mutationDeletedAd } from "@/graphql/mutationDeletedAd";
 
 const AdDetail = (): React.ReactNode => {
-  // const [ad, setad] = useState<AdCardProps>();
-
   const router = useRouter();
   const adId = router.query.id as string;
 
@@ -23,7 +21,7 @@ const AdDetail = (): React.ReactNode => {
 
   // Supprime une annonce
   const [doDelete] = useMutation(mutationDeletedAd);
-
+  // On passe l'id de l'annonce en variable
   async function deleteAd() {
     await doDelete({
       variables: {

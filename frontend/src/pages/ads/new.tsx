@@ -2,7 +2,6 @@ import Layout from "@/components/Layout";
 import { FormEvent, SetStateAction, useEffect, useState } from "react";
 import { CategoryType } from "@/components/Category";
 import { useRouter } from "next/router";
-import { AdType } from "@/components/AdCard";
 import { queryAdById } from "@/graphql/queryAdById";
 import { useMutation, useQuery } from "@apollo/client";
 import { queryAllCategories } from "@/graphql/queryAllCategories";
@@ -60,11 +59,13 @@ const NewAd = () => {
     });
   };
 
+  // On récupère les data d'une annonce si une Id est renseignée dans l'URL, sinon on skip
   const { data } = useQuery<{ ad: AdFormData }>(queryAdById, {
     variables: { adId: id },
     skip: id === undefined,
   });
 
+  // On écoute si de la data est récupérée alors on la met dans les champs
   useEffect(() => {
     if (data?.ad) {
       setFormData(data.ad);
@@ -85,6 +86,7 @@ const NewAd = () => {
     }
   }, [categories]);
 
+  // Ces deux mutations nous permettent de créer et de mettre à jour une annonce, refetchQueries permet de relancer les requêtes et évite la mise en cache qui nous montreraient des données obsolètes
   const [createAd, { loading: createLoading }] = useMutation(
     mutationCreatedAd,
     {

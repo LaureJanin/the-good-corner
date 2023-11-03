@@ -21,7 +21,8 @@ const Header = (): React.ReactNode => {
     router.push(`/?searchWord=${searchWord.trim()}`);
   }
 
-  const { data, error, loading } = useQuery<{ allCategories: CategoryType[] }>(
+  // On récupère les catégories avec grapphQL
+  const { data } = useQuery<{ allCategories: CategoryType[] }>(
     queryAllCategories
   );
   const categories = data ? data.allCategories : [];

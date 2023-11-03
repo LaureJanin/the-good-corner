@@ -16,12 +16,14 @@ const RecentAds = (props: RecentAdsProps): React.ReactNode => {
   const [priceSort, setPriceSort] = useState("");
   const [page, setPage] = useState(1);
 
+  // Sert à ajouter les prix dans un panier mais rien n'est sauvegarder dans le back
   const AdPrice = (adPrice: number, ad: AdCardProps) => {
     setTotal(total + adPrice);
     setItem([...item, ad]);
     setIsInitialized(true);
   };
 
+  // On passe une query au back, on lui passe une variable where pour trier par categorie et par la recherche et une variable de tri par prix
   const { data } = useQuery<{ allAds: AdType[] }>(queryAllAds, {
     variables: {
       where: {
@@ -33,6 +35,7 @@ const RecentAds = (props: RecentAdsProps): React.ReactNode => {
   });
   const ads = data ? data.allAds : [];
 
+  // Pour l'instant la pagination ne marche plus
   const pageChange = (newPage: number) => {
     setPage(newPage);
   };
