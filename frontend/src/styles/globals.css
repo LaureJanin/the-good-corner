@@ -13,6 +13,7 @@ h1 {
   margin: 0;
 }
 
+
 .header {
   position: fixed;
   top: 0;
@@ -32,7 +33,9 @@ h1 {
 }
 
 .categories-navigation {
-  font-size: 12px;
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
   font-weight: bold;
   color: #666;
   padding: 16px 10px 6px;
@@ -43,6 +46,17 @@ h1 {
 .category-navigation-link {
   text-decoration: unset;
   color: inherit;
+}
+
+h2 {
+  text-align: center;
+}
+
+.form {
+  width: 100%;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
 }
 
 .button {
@@ -87,6 +101,16 @@ h1 {
 
 .text-field {
   height: 40px;
+  background-color: white;
+  padding: 8px;
+  border: 2px solid #ffa41b;
+  border-radius: 8px;
+  font-size: 12px;
+  font-family: inherit;
+}
+
+.text-area {
+  height: 100px;
   background-color: white;
   padding: 8px;
   border: 2px solid #ffa41b;
@@ -168,7 +192,21 @@ h1 {
   .categories-navigation {
     padding-top: 14px;
     display: flex;
-    justify-content: space-between;
+    justify-content: space-around;
+  }
+
+  h2 {
+    width: 20rem;
+    margin: auto;
+    padding: 1rem;
+    text-align: center;
+  }
+
+  .form {
+    width: 20rem;
+    margin: auto;
+    display: flex;
+    flex-direction: column;
   }
 
   .ad-details-image-container {

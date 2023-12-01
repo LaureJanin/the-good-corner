@@ -11,7 +11,10 @@ export type AdType = {
   location: string;
   createdAt: string;
   category: string;
-  tag: string;
+  tags: {
+    id: number;
+    name: string;
+  }[];
   link: string;
 };
 

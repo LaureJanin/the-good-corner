@@ -7,6 +7,8 @@ import { dataSource } from "./db";
 import { AdsResolver } from "./resolvers/Ads";
 import { CategoriesResolver } from "./resolvers/Categories";
 
+console.log("Hello");
+
 async function start() {
   const schema = await buildSchema({
     resolvers: [TagsResolver, AdsResolver, CategoriesResolver],

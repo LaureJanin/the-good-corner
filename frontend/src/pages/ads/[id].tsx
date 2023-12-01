@@ -18,7 +18,6 @@ const AdDetail = (): React.ReactNode => {
     skip: adId === undefined,
   });
   const ad = data ? data.ad : null;
-
   // Supprime une annonce
   const [doDelete] = useMutation(mutationDeletedAd);
   // On passe l'id de l'annonce en variable
@@ -70,6 +69,23 @@ const AdDetail = (): React.ReactNode => {
                         })}
                       </div>
                     )}
+                    <br />
+                    <br />
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "row",
+                        gap: "1rem",
+                      }}
+                    >
+                      <p>Tags associés :</p>
+                      {ad.tags.map((tag, index) => (
+                        <p key={tag.id}>
+                          {tag.name}
+                          {index < ad.tags.length - 1 && <span> &#8226;</span>}
+                        </p>
+                      ))}
+                    </div>
                     <br />
                     <br />
                     {ad.location}

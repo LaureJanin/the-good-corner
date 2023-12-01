@@ -1,5 +1,6 @@
 {
     "recommendations": [
-        "perkovec.emoji"
+        "perkovec.emoji",
+        "ms-ossdata.vscode-postgresql"
     ]
 }

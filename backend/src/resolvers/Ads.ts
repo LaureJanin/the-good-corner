@@ -1,33 +1,43 @@
-import { Arg, ID, Mutation, Query, Resolver } from "type-graphql";
+import { Arg, ID, Mutation, Query, Resolver, Int } from "type-graphql";
 import { Ad, AdCreatedInput, AdUpdatedInput, AdsWhere } from "../entities/Ad";
 import { validate } from "class-validator";
 import { In, Like, MoreThanOrEqual, LessThanOrEqual } from "typeorm";
 import { merge } from "../utils";
+
+export function getAdQueryWhere(graphqlWhere?: AdsWhere): {
+  [key: string]: unknown;
+} {
+  const where: any = {};
+
+  if (graphqlWhere?.categoryIn) {
+    where.category = { id: In(graphqlWhere.categoryIn) };
+  }
+
+  if (graphqlWhere?.searchTitle) {
+    where.title = Like(`%${graphqlWhere.searchTitle}%`);
+  }
+
+  if (graphqlWhere?.priceGte) {
+    where.price = MoreThanOrEqual(Number(graphqlWhere.priceGte));
+  }
+
+  if (graphqlWhere?.priceLte) {
+    where.price = LessThanOrEqual(Number(graphqlWhere.priceLte));
+  }
+
+  return where;
+}
 
 @Resolver(Ad)
 export class AdsResolver {
   @Query(() => [Ad])
   async allAds(
     @Arg("where", { nullable: true }) where?: AdsWhere,
-    @Arg("priceSort", { nullable: true }) priceSort?: "ASC" | "DESC"
+    @Arg("priceSort", { nullable: true }) priceSort?: "ASC" | "DESC",
+    @Arg("take", () => Int, { nullable: true }) take?: number,
+    @Arg("skip", () => Int, { nullable: true }) skip?: number
   ): Promise<Ad[]> {
-    const queryWhere: any = {};
-
-    if (where?.categoryIn) {
-      queryWhere.category = { id: In(where.categoryIn) };
-    }
-
-    if (where?.searchTitle) {
-      queryWhere.title = Like(`%${where.searchTitle}%`);
-    }
-
-    if (where?.priceGte) {
-      queryWhere.price = MoreThanOrEqual(Number(where.priceGte));
-    }
-
-    if (where?.priceLte) {
-      queryWhere.price = LessThanOrEqual(Number(where.priceLte));
-    }
+    const queryWhere = getAdQueryWhere(where);
 
     const order: { [key: string]: "ASC" | "DESC" } = {};
 
@@ -38,12 +48,26 @@ export class AdsResolver {
     const ads = await Ad.find({
       where: queryWhere,
       order,
+      skip,
+      take: take ?? 50,
       relations: {
         category: true,
         tags: true,
       },
     });
     return ads;
+  }
+
+  @Query(() => Int)
+  async allAdsCount(
+    @Arg("where", { nullable: true }) where?: AdsWhere
+  ): Promise<number> {
+    const queryWhere = getAdQueryWhere(where);
+
+    const count = await Ad.count({
+      where: queryWhere,
+    });
+    return count;
   }
 
   @Query(() => Ad, { nullable: true })

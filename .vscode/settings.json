@@ -8,5 +8,6 @@
     {
       "mode": "auto"
     }
-  ]
+  ],
+  "pgsql.copyIncludeHeaders": false
 }

@@ -8,6 +8,8 @@ import { queryAllCategories } from "@/graphql/queryAllCategories";
 import { mutationCreatedAd } from "@/graphql/mutationCreateAd";
 import { mutationUpdatedAd } from "@/graphql/mutationUpdateAd";
 import { queryAllAds } from "@/graphql/queryAllAds";
+import { queryAllTags } from "@/graphql/queryAllTags";
+import { TagType } from "./adsByTags";
 
 type AdFormData = {
   id: number;
@@ -19,10 +21,15 @@ type AdFormData = {
   location: string;
   createdAt: Date;
   category: { id: number };
+  tags: {
+    id: number;
+    name: string;
+  }[];
 };
 
 const NewAd = () => {
   const [error, setError] = useState<"title" | "price">();
+  const [selectedTags, setSelectedTags] = useState<number[]>([]);
   const [imageUrl, setImageUrl] = useState<string>("");
   const [formData, setFormData] = useState<AdFormData>({
     id: 0,
@@ -34,6 +41,12 @@ const NewAd = () => {
     location: "",
     createdAt: new Date(),
     category: { id: 0 },
+    tags: [
+      {
+        id: 0,
+        name: "",
+      },
+    ],
   });
 
   const router = useRouter();
@@ -70,6 +83,8 @@ const NewAd = () => {
     if (data?.ad) {
       setFormData(data.ad);
       setImageUrl(data.ad.imgUrl);
+      const adTags = data.ad.tags.map((tag) => tag.id);
+      setSelectedTags(adTags);
     }
   }, [data]);
 
@@ -85,6 +100,24 @@ const NewAd = () => {
       setFormData({ ...formData, category: { id: categories[0].id } });
     }
   }, [categories]);
+
+  // on récupère tous les tags
+  const { data: dataTags } = useQuery<{ allTags: TagType[] }>(queryAllTags);
+  const tags = dataTags ? dataTags.allTags : [];
+
+  // permet de cocher ou décocher des tags
+  const tagChange = (tagId: number) => {
+    // Mettez à jour l'état des tags sélectionnés
+    setSelectedTags((prevSelectedTags) => {
+      if (prevSelectedTags.includes(tagId)) {
+        // Si le tag est déjà sélectionné, le retirer
+        return prevSelectedTags.filter((id) => id !== tagId);
+      } else {
+        // Sinon, l'ajouter à la liste des tags sélectionnés
+        return [...prevSelectedTags, tagId];
+      }
+    });
+  };
 
   // Ces deux mutations nous permettent de créer et de mettre à jour une annonce, refetchQueries permet de relancer les requêtes et évite la mise en cache qui nous montreraient des données obsolètes
   const [createAd, { loading: createLoading }] = useMutation(
@@ -126,6 +159,7 @@ const NewAd = () => {
                 // location: formData.location,
                 // createdAt: formData.createdAt,
                 category: { id: formData.category.id },
+                tags: selectedTags.map((tagId) => ({ id: tagId })),
               },
             },
           });
@@ -141,6 +175,7 @@ const NewAd = () => {
                 // location: formData.location,
                 // createdAt: formData.createdAt,
                 category: { id: formData.category.id },
+                tags: selectedTags.map((tagId) => ({ id: tagId })),
               },
             },
           });
@@ -161,7 +196,7 @@ const NewAd = () => {
     <Layout title="Ad">
       <main className="main-content">
         <h2>{id ? "Modifier une annonce" : "Publier une annonce"}</h2>
-        <form onSubmit={onSubmit}>
+        <form className="form" onSubmit={onSubmit}>
           <input
             className="text-field"
             name="title"
@@ -178,8 +213,8 @@ const NewAd = () => {
           )}
           <br />
           <br />
-          <input
-            className="text-field"
+          <textarea
+            className="text-area"
             name="description"
             placeholder="Description de l'annonce"
             value={formData.description}
@@ -203,7 +238,6 @@ const NewAd = () => {
           <input
             className="text-field"
             name="price"
-            type="number"
             placeholder="Prix de l'article"
             value={formData.price}
             onChange={(e) =>
@@ -243,10 +277,8 @@ const NewAd = () => {
           />
           <br />
           <br />
-          {/* <input type="date" className="text-field" name="createdAt" /> */}
-          <br />
-          <br />
           <select
+            className="text-field"
             name="category"
             value={formData.category.id}
             onChange={(e) =>
@@ -263,6 +295,24 @@ const NewAd = () => {
             ))}
           </select>
           <br />
+          {formData.tags.length > 0 && (
+            <div>
+              <p>Ajouter ou supprimer des tags :</p>
+              {tags.map((tag) => (
+                <div key={tag.id}>
+                  <input
+                    type="checkbox"
+                    id={`tag-${tag.id}`}
+                    name={`tag-${tag.id}`}
+                    checked={selectedTags.includes(tag.id)}
+                    onChange={() => tagChange(tag.id)}
+                  />
+                  <label htmlFor={`tag-${tag.id}`}>{tag.name}</label>
+                </div>
+              ))}
+              <br />
+            </div>
+          )}
           <br />
           <button type="submit" className="button" disabled={loading}>
             {id ? "Modifier" : "Publier"}
