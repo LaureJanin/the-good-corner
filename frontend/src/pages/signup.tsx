@@ -37,20 +37,27 @@ export default function Signup(): React.ReactNode {
             Une erreur est survenue (compte déjà existant ou MDP trop faible)
           </p>
         )}
-        <form onSubmit={onSubmit}>
+        <form className="form" onSubmit={onSubmit}>
+          <p>Veuillez vous enregistrer</p>
           <input
             type="email"
+            className="text-field"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="email@gmail.com"
           />
+          <br />
           <input
             type="password"
+            className="text-field"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="mot de passe"
           />
-          <button type="submit">Enregistrement</button>
+          <br />
+          <button className="button" type="submit">
+            Enregistrement
+          </button>
         </form>
       </main>
     </Layout>

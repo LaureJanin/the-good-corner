@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Category, CategoryType } from "@/components/Category";
 import { useState } from "react";
 import { useRouter } from "next/router";
-import { useMutation, useQuery } from "@apollo/client";
+import { useApolloClient, useMutation, useQuery } from "@apollo/client";
 import { queryAllCategories } from "@/graphql/queryAllCategories";
 import { UserType } from "@/types";
 import { queryMe } from "@/graphql/queryMe";
@@ -37,7 +37,9 @@ const Header = (): React.ReactNode => {
   const [doSignout] = useMutation(mutationSignout, {
     refetchQueries: [queryMe],
   });
+  const apolloClient = useApolloClient();
   async function logout() {
+    apolloClient.clearStore();
     doSignout();
   }
 
@@ -95,10 +97,16 @@ const Header = (): React.ReactNode => {
           </button>
         </form>
         {me && (
-          <button onClick={logout} className="button link-button">
-            <span className="mobile-short-label">Déco</span>
-            <span className="desktop-long-label">Déconnection</span>
-          </button>
+          <>
+            <Link href="/users/me" className="button link-button">
+              <span className="mobile-short-label">Profile</span>
+              <span className="desktop-long-label">Mon profile</span>
+            </Link>
+            <button onClick={logout} className="button link-button">
+              <span className="mobile-short-label">Déco</span>
+              <span className="desktop-long-label">Déconnection</span>
+            </button>
+          </>
         )}
         <Link href="/ads/new" className="button link-button">
           <span className="mobile-short-label">Publier</span>

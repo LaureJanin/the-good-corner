@@ -44,6 +44,10 @@ function Auth(props: { children: React.ReactNode }) {
     return <p>Chargement</p>;
   }
 
+  if (publicPages.includes(router.pathname) === false && !data?.item) {
+    return <p>Redirection</p>;
+  }
+
   return props.children;
 }
 
