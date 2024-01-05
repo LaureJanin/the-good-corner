@@ -4,14 +4,11 @@ import { queryAdsByUser } from "@/graphql/mutationAdsByUser";
 import { queryMe } from "@/graphql/queryMe";
 import { UserType } from "@/types";
 import { useQuery } from "@apollo/client";
-import { useState } from "react";
 
 export default function Me(): React.ReactNode {
   // to use to get current user
   const { data: meData } = useQuery<{ item: UserType | null }>(queryMe);
   const me = meData?.item;
-
-  console.log(me);
 
   // get ads by user
   const { data: dataAds } = useQuery(queryAdsByUser, {
